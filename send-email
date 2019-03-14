@@ -1,0 +1,50 @@
+#使用smtplib库发送邮件
+import smtplib
+from email.mime.multipart import MIMEMultipart
+
+#设置发件人信息
+smtpseerver = "smtp.163.com"|"smtp.qq.com"
+username = "发件人账号"
+passward = "发件人授权码"
+sender = "发件人邮箱"
+receuver = ["1111@qq.com","22222@qq.com"] #设置多个收件人
+subject = "填写标题内容"
+#构造邮件对象MIMEMultipart对象
+msg = MIMEMultipart('mixed') #如果一个邮件有纯文本正文，超文本正文，内嵌资源，附件，则选择mixed类型。
+msg['Subject'] = subject #设置主题
+msg['From'] = '发件人的邮箱<发件人的邮箱>'
+msg['To'] = ";".join(receiver)#设置多个收件人并已;隔开
+
+#构造内容文件
+text = "请输入你要发送的内容"
+text_plain = MIMEText(text,"plain","utf-8")
+msg.attach(text_plain)
+
+#构造图片链接
+sendimgfile = open(r'图片文件路径','rb').read()
+image = MIMEImage(sendimgfile)
+image.add_header("Content-ID",'<imagel>')
+image["Content-Disposition"] = 'attachment;filename = "打开的图片文件名字"'
+msg.attach(image)
+
+#构造html
+html = '''html文件内容'''
+text_html = MIMEText(html,'html','utf-8')
+text_html["Content-Disposition"] = 'attachment;filename = "打开html文件名字"'
+msg.attach(text_html)
+
+#构造附件
+senderfile = open(r'文件路径','rb').read()
+text_att = MIMEText(senderfile,'base64','utf-8')
+text_att["Content-Type"] = 'application/octet-stream'
+text_att.add_header('Content-Disposition', 'attachment', filename='文件名字')
+msg.attach(text_att)
+
+#发送邮件
+
+for x in range(100):#100代表同一封邮件发送次数
+    smtp = smtplib.SMTP()
+    smtp.connect('smtp.163.com')
+    smtp.login(username, passward)
+    smtp.sendmail(sender, receiver, msg.as_string())
+    smtp.quit()

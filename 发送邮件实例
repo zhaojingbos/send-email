@@ -1,0 +1,21 @@
+import smtplib
+from email.mime.text import MIMEText
+msg = MIMEText('这是我使用python smtplib及email模块发送的邮件', 'plain', 'utf-8')
+subject = "python 邮件测试"
+smtp_server = "smtp.qq.com"
+from_add = "1111111111@qq.com"
+passward = "ssssssssss"
+to_addr = ["1111111111@qq.com","11111111@qq.com","11111111111@qq.com"]
+
+msg["Subject"] = subject
+msg["From"] = from_add
+msg["To"] = ",".join(to_addr)
+try:
+    server = smtplib.SMTP_SSL(smtp_server, 465)
+    server.set_debuglevel(1)
+    server.login(from_add, passward)
+    server.sendmail(from_add, to_addr, msg.as_string())
+    server.quit()
+    print("邮件发送成功")
+except smtplib.SMTPException as e:
+    print(e)
